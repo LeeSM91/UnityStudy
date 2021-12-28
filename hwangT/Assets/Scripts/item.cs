@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class item : MonoBehaviour
+public class Item : MonoBehaviour
 {
     public enum Type
     {
@@ -15,5 +15,12 @@ public class item : MonoBehaviour
 
     public Type type;
     public int value;
+    public int rotate;
+
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.up * rotate * Time.deltaTime);
+    }
 
 }

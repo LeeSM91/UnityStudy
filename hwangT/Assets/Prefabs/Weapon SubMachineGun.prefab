@@ -4912,7 +4912,7 @@ GameObject:
   - component: {fileID: 1388412469141557795}
   m_Layer: 0
   m_Name: Weapon SubMachineGun
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4989,7 +4989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
-  value: 0
+  value: 2
   rotate: 20
 --- !u!1 &5815438663008860165
 GameObject:

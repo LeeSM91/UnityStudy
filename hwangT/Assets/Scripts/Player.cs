@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     public float jumpPower;
     public GameObject[] weapons;
     public bool[] hasWeapons;
+    public GameObject[] grenades;
+    public Camera fllowCamara;
+
 
     public int ammo;
     public int coin;
@@ -27,6 +30,8 @@ public class Player : MonoBehaviour
 
     bool wDown;
     bool jDown;
+    bool fDown;
+    bool rDown;
     bool iDown;
     bool sDown1;
     bool sDown2;
@@ -36,6 +41,8 @@ public class Player : MonoBehaviour
     bool isJump;
     bool isDodge;
     bool isSwap;
+    bool isFireReady;
+    bool isReload;
 
     Vector3 moveVec;
     Vector3 dodgeVec;
@@ -43,9 +50,10 @@ public class Player : MonoBehaviour
     Animator anim;
 
     GameObject nearObject;
-    GameObject equipWeapon;
+    Weapon equipWeapon;
 
     int equipWeaponIndex = -1;
+    float fireDeley;
 
     private void Awake()
     {
@@ -69,6 +77,8 @@ public class Player : MonoBehaviour
         Dodge();
         Interaction();
         Swap();
+        Attack();
+        Reload();
 
 
 
@@ -81,9 +91,11 @@ public class Player : MonoBehaviour
         wDown = Input.GetButton("Walk");
         jDown = Input.GetButtonDown("Jump");
         iDown = Input.GetButtonDown("Interaction");
-        sDown1 = Input.GetButtonDown("Swap1");
-        sDown2 = Input.GetButtonDown("Swap2");
-        sDown3 = Input.GetButtonDown("Swap3");
+        sDown1 = Input.GetButtonDown("Swap1");  // ¸ÁÄ¡
+        sDown2 = Input.GetButtonDown("Swap2");  // ±ÇÃÑ
+        sDown3 = Input.GetButtonDown("Swap3");  // µû¹ßÃÑ
+        fDown = Input.GetButtonDown("Fire1");
+        rDown = Input.GetButtonDown("Reload");
     }
 
     void Move()
@@ -95,7 +107,7 @@ public class Player : MonoBehaviour
             moveVec = dodgeVec;
         }
 
-        if (isSwap)
+        if (isSwap || isReload)
         {
             moveVec = Vector3.zero;
         }
@@ -117,6 +129,19 @@ public class Player : MonoBehaviour
     void Turn()
     {
         transform.LookAt(transform.position + moveVec);
+
+        if (fDown)
+        {
+            Ray ray = fllowCamara.ScreenPointToRay(Input.mousePosition);
+            RaycastHit rayHit;
+            if (Physics.Raycast(ray, out rayHit, 100))
+            {
+                Vector3 nextVec = rayHit.point - transform.position;
+                nextVec.y = 0;
+                transform.LookAt(transform.position + nextVec);
+            }
+        }
+
     }
 
     void Jump()
@@ -128,6 +153,47 @@ public class Player : MonoBehaviour
             anim.SetTrigger("doJump");
             isJump = true;
         }
+    }
+
+    void Attack()
+    {
+        if (equipWeapon == null) return;
+
+        fireDeley += Time.deltaTime;
+        isFireReady = equipWeapon.rate < fireDeley;
+        if (fDown && isFireReady && !isDodge && !isSwap)
+        {
+            equipWeapon.Use();
+            anim.SetTrigger(equipWeapon.type == Weapon.Type.Melee ? "doSwing" : "doShot");
+            fireDeley = 0;
+        }
+    }
+
+    void Reload()
+    {
+        if (equipWeapon == null) return;
+
+        if (equipWeapon.type == Weapon.Type.Melee) return;
+
+        if (ammo == 0) return;
+
+        if (rDown && !isJump && !isDodge && !isSwap && isFireReady && !isReload)
+        {
+            Debug.Log("reload");
+            anim.SetTrigger("doReload");
+            isReload = true;
+
+            Invoke("ReloadOut", 1f);
+        }
+
+    }
+
+    void ReloadOut()
+    {
+        int reAmmo = ammo < equipWeapon.maxAmmo ? ammo : equipWeapon.maxAmmo;
+        equipWeapon.curAmmo = reAmmo;
+        ammo -= reAmmo;
+        isReload = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -176,10 +242,10 @@ public class Player : MonoBehaviour
         {
             if (equipWeapon != null)
             {
-            equipWeapon.SetActive(false);
+            equipWeapon.gameObject.SetActive(false);
             }
             equipWeaponIndex = weaponIndex;
-            equipWeapon = weapons[weaponIndex];
+            equipWeapon = weapons[weaponIndex].GetComponent<Weapon>();
             weapons[weaponIndex].SetActive(true);
 
             anim.SetTrigger("doSwap");
@@ -251,6 +317,7 @@ public class Player : MonoBehaviour
                     }
                     break;
                 case Item.Type.Grenade:
+                    grenades[hasGrenades].SetActive(true);
                     hasGrenades += item.value;
                     if (hasGrenades > maxHasGrenades)
                     {

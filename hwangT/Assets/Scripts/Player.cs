@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
     bool isSwap;
     bool isFireReady;
     bool isReload;
+    bool isBorder;
 
     Vector3 moveVec;
     Vector3 dodgeVec;
@@ -112,14 +113,19 @@ public class Player : MonoBehaviour
             moveVec = Vector3.zero;
         }
 
-        if (wDown)
+        if (!isBorder)
         {
-            transform.position += moveVec * speed * 0.3f * Time.deltaTime;
+            if (wDown)
+            {
+                transform.position += moveVec * speed * 0.3f * Time.deltaTime;
+            }
+            else
+            {
+                transform.position += moveVec * speed * Time.deltaTime;
+            }
         }
-        else
-        {
-            transform.position += moveVec * speed * Time.deltaTime;
-        }
+
+
 
 
         anim.SetBool("isRun", moveVec != Vector3.zero);
@@ -242,7 +248,7 @@ public class Player : MonoBehaviour
         {
             if (equipWeapon != null)
             {
-            equipWeapon.gameObject.SetActive(false);
+                equipWeapon.gameObject.SetActive(false);
             }
             equipWeaponIndex = weaponIndex;
             equipWeapon = weapons[weaponIndex].GetComponent<Weapon>();
@@ -279,7 +285,24 @@ public class Player : MonoBehaviour
     }
 
 
-     void OnTriggerStay(Collider other)
+    void FreezeRotation()
+    {
+        rigid.angularVelocity = Vector3.zero;
+    }
+
+    void stopToWall()
+    {
+        Debug.DrawRay(transform.position, transform.forward * 5, Color.green);
+        isBorder = Physics.Raycast(transform.position, transform.forward, 2, LayerMask.GetMask("Wall"));
+    }
+    private void FixedUpdate()
+    {
+        stopToWall();
+        FreezeRotation();
+    }
+
+
+    void OnTriggerStay(Collider other)
     {
         if (other.tag == "Weapon")
         {

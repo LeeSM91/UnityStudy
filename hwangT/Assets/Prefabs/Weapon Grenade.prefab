@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6604548213016870331}
   - component: {fileID: 1537762302760116625}
   - component: {fileID: 1337660975450945111}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Mesh Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4960287814360346171}
   - component: {fileID: 4960287814360346168}
   - component: {fileID: 4960287814360346170}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Weapon Grenade
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -185,7 +185,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4960287815525096201}
   - component: {fileID: 4960287815525096206}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 4960287815819582363}
   - component: {fileID: 4960287815819582361}
   - component: {fileID: 4960287815819582360}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

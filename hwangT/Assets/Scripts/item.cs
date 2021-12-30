@@ -17,10 +17,27 @@ public class Item : MonoBehaviour
     public int value;
     public int rotate;
 
+    Rigidbody rigit;
+    SphereCollider sphereCollider;
+
+    private void Awake()
+    {
+        rigit = GetComponent<Rigidbody>();
+        sphereCollider = GetComponent<SphereCollider>();
+    }
 
     private void Update()
     {
         transform.Rotate(Vector3.up * rotate * Time.deltaTime);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Floor")
+        {
+            rigit.isKinematic = true;
+            sphereCollider.enabled = false;
+        }
     }
 
 }

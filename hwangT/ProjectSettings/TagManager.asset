@@ -23,8 +23,8 @@ TagManager:
   - BulletCase
   - Grenade
   - Wall
-  - 
-  - 
+  - EnemyDead
+  - Enemy
   - 
   - 
   - 
